@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, :root { height: 100%; }
+body {
+  @apply bg-gradient-to-b from-pastelPink via-pastelPeach to-pastelMint text-neutral-800;
+  -webkit-font-smoothing: antialiased;
+}
+button { @apply active:scale-95 transition; }
