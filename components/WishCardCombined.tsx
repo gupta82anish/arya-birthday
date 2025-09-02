@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import SpriteLayer from './SpritesLayer'
 import useIsSmall from './isSmall.hook'
+import Image from 'next/image'
+
 
 type Wish = { id: string; name: string; message: string; image_url?: string | null }
 
@@ -88,7 +90,7 @@ function MobileCard({ open, wish, seed, onClose }: { open: boolean; wish: Wish; 
                     {wish.image_url && (
                       <div className="mt-4 rounded-2xl overflow-hidden flex-shrink-0">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={wish.image_url} alt={wish.name} className="w-full max-h-[30vh] object-cover" />
+                        <Image src={wish.image_url} alt={wish.name} className="w-full max-h-[30vh] object-cover" />
                       </div>
                     )}
     
@@ -116,132 +118,6 @@ function MobileCard({ open, wish, seed, onClose }: { open: boolean; wish: Wish; 
           )}
         </AnimatePresence>
       )
-}
-
-/* ----------------- Desktop: 3D book layout ----------------- */
-/* ----------------- Desktop: 3D book layout (pronounced) ----------------- */
-/* ----------------- Desktop: spine-hinge book (no global tilt) ----------------- */
-import { useMotionValue, useTransform } from 'framer-motion'
-import { useCallback, useRef } from 'react'
-import Image from 'next/image'
-
-function DesktopBookCard({ wish, seed, onClose }: { wish: any; seed: number; onClose: () => void }) {
-    const ref = useRef<HTMLDivElement | null>(null)
-  
-    // Hinge (mouse x) to flex pages around the spine
-    const hinge = useMotionValue(0.5)
-    const onMove = useCallback((e: React.MouseEvent) => {
-      const el = ref.current
-      if (!el) return
-      const r = el.getBoundingClientRect()
-      const x = (e.clientX - r.left) / r.width
-      hinge.set(Math.min(1, Math.max(0, x)))
-    }, [hinge])
-    const onLeave = () => hinge.set(0.5)
-  
-    const leftRot  = useTransform(hinge, [0,   0.5, 1], [16, 9, 5])
-    const rightRot = useTransform(hinge, [0,   0.5, 1], [-5, -9, -16])
-  
-    const Spine = () => (
-      <>
-        <div className="absolute inset-y-0 left-1/2 -ml-[1px] w-[2px] bg-black/20 z-30" />
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[40%] -translate-x-1/2 bg-gradient-to-l from-black/12 to-transparent z-20" />
-        <div className="pointer-events-none absolute inset-y-0 left-1/2 w-[40%]  translate-x-1/2 bg-gradient-to-r from-black/12 to-transparent z-20" />
-      </>
-    )
-  
-    return (
-      <div
-        ref={ref}
-        onMouseMove={onMove}
-        onMouseLeave={onLeave}
-        className="relative overflow-visible"
-        style={{
-          perspective: 1400,
-          width: 'min(95vw, 1280px)',   // wider
-          height: 'min(82svh, 860px)',  // taller
-        }}
-      >
-        {/* soft ground shadow */}
-        <div className="absolute -inset-x-8 bottom-2 h-14 bg-black/20 blur-2xl rounded-[100%] opacity-35" />
-  
-        <div className="relative w-full h-full rounded-3xl overflow-hidden shadow-2xl">
-          {/* Background gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-pastelSky/70 via-pastelPeach/70 to-pastelMint/70" />
-  
-          {/* Edge sprite frame (more sprites for bigger canvas) */}
-          <SpriteLayer count={26} seed={seed} variant="border" className="z-10" />
-  
-          {/* Book (preserve-3d) */}
-          <div className="absolute inset-0 z-20" style={{ transformStyle: 'preserve-3d' as any }}>
-            <Spine />
-  
-            {/* Left page (photo) */}
-            <motion.div
-              className="absolute left-0 top-0 w-1/2 h-full origin-right rounded-l-3xl overflow-hidden bg-white/85 backdrop-blur ring-1 ring-black/10"
-              style={{
-                transformStyle: 'preserve-3d' as any,
-                rotateY: leftRot,
-                boxShadow: 'inset -16px 0 28px -18px rgba(0,0,0,0.28)',
-              }}
-              initial={{ rotateY: 24 }}
-              transition={{ type: 'spring', stiffness: 140, damping: 18, delay: 0.05 }}
-            >
-              {wish.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={wish.image_url} alt={wish.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full grid place-items-center text-sm opacity-70">No photo provided</div>
-              )}
-            </motion.div>
-  
-            {/* Right page (text) — scrollable middle */}
-            <motion.div
-              className="absolute right-0 top-0 w-1/2 h-full origin-left rounded-r-3xl overflow-hidden bg-white/95 backdrop-blur ring-1 ring-black/10"
-              style={{
-                transformStyle: 'preserve-3d' as any,
-                rotateY: rightRot,
-                boxShadow: 'inset 16px 0 28px -18px rgba(0,0,0,0.28)',
-              }}
-              initial={{ rotateY: -24 }}
-              transition={{ type: 'spring', stiffness: 140, damping: 18, delay: 0.12 }}
-            >
-              <div className="absolute inset-0 flex flex-col">
-                {/* Header (fixed) */}
-                <div className="px-9 py-7 text-center shrink-0">
-                  <div className="text-[clamp(22px,2.4vw,34px)] font-semibold">Happy Birthday 🎂</div>
-                  <div className="mt-1 text-sm opacity-70">From {wish.name}</div>
-                </div>
-  
-                {/* Scrollable message */}
-                <div className="relative flex-1 min-h-0">
-                  <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white/95 to-transparent z-10" />
-                  <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white/95 to-transparent z-10" />
-                  <div className="h-full overflow-y-auto px-9 pb-7 pr-7
-                                  [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,.25)_transparent]">
-                    <p className="text-[clamp(14px,1.15vw,18px)] leading-relaxed whitespace-pre-wrap text-center">
-                      {wish.message}
-                    </p>
-                  </div>
-                </div>
-  
-                {/* Bottom garland (fixed) */}
-                <div className="relative h-24 shrink-0">
-                  <SpriteLayer count={12} seed={seed + 1} variant="bottom" className="z-0" />
-                </div>
-  
-                {/* Close */}
-                <div className="px-9 pb-7 flex items-center justify-center shrink-0">
-                  <button onClick={onClose} className="rounded-full bg-black text-white px-6 py-2.5 text-sm shadow">
-                    Close
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-    )
 }
 
 

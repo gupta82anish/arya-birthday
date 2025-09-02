@@ -10,7 +10,7 @@ function checkPasscode(pass: string | null | undefined) {
   }
 }
 
-export async function submitWish(formData: FormData) {
+export async function submitWish(formData: FormData, birthday_girl: string) {
   const name = String(formData.get('name') || '').trim()
   const message = String(formData.get('message') || '').trim()
   const passcode = String(formData.get('passcode') || '')
@@ -38,7 +38,7 @@ export async function submitWish(formData: FormData) {
 
   const { error: insErr } = await supabase
     .from('wishes')
-    .insert({ name, message, image_path, image_url })
+    .insert({ name, message, image_path, image_url, birthday_girl })
   if (insErr) throw insErr
 
   return { ok: true }

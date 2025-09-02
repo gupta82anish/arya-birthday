@@ -5,5 +5,7 @@ export const BIRTHDAY_MONTH = 7; // 0-indexed: 7 = August
 export const BIRTHDAY_DAY = 13;
 export const MUSIC_SRC = '/audio/happy-birthday.mp3'; // Put your mp3 at public/audio/party.mp3
 
+export const BIRTHDAY_GIRL = 'arya'
+
 // Slideshow auto-advance in ms
 export const SLIDE_INTERVAL = 5000;

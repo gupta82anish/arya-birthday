@@ -2,6 +2,7 @@
 import { useState, useTransition } from 'react'
 import PasscodeInput from './PasscodeInput'
 import { submitWish } from '@/app/actions'
+import { BIRTHDAY_GIRL } from '@/lib/config'
 
 export default function WishForm() {
   const [ok, setOk] = useState<string | null>(null)
@@ -15,7 +16,7 @@ export default function WishForm() {
         setOk(null)
         startTransition(async () => {
           try {
-            const res = await submitWish(formData)
+            const res = await submitWish(formData, BIRTHDAY_GIRL)
             if (res?.ok) setOk('Thanks! Your wish has been submitted 💖')
           } catch (e: any) {
             setErr(e?.message ?? 'Something went wrong')

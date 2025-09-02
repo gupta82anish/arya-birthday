@@ -1,5 +1,6 @@
 import { createReadClient } from '@/lib/supabaseRead'
 import WishesWall from '@/components/WishesWall'
+import { BIRTHDAY_GIRL } from '@/lib/config'
 
 export const dynamic = 'force-dynamic'
 
@@ -8,6 +9,7 @@ async function fetchWishes() {
   const { data, error } = await supabase
     .from('wishes')
     .select('id,name,message,image_url,created_at')
+    .eq('birthday_girl', BIRTHDAY_GIRL)
     .order('created_at', { ascending: false })
     .limit(200)
   if (error) throw error

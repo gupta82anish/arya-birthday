@@ -1,8 +1,7 @@
 'use client'
-import Link from 'next/link'
+
 import { useMemo, useState } from 'react'
-import WishCardModal from './WishCardModal'
-import WishCard from './WishCard'
+
 import WishCardCombined from './WishCardCombined'
 
 type Wish = {
@@ -48,11 +47,7 @@ export default function WishesWall({ initial }: { initial: Wish[] }) {
                 setWish(w)
             }}>
 
-                {/* {w.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={w.image_url} alt={w.name} className="w-full h-56 object-cover" loading="lazy" />
-                ) : (
-                )} */}
+               
                 <div className="h-2 bg-gradient-to-r from-pastelLilac via-pastelSky to-pastelMint" />
                 <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
@@ -73,8 +68,6 @@ export default function WishesWall({ initial }: { initial: Wish[] }) {
             ))}
         </div>
         </div>
-        {/* <WishCardModal open={open} onClose={() => setOpen(false)} wish={wish as Wish} /> */}
-        {/* <WishCard open={open} onClose={() => setOpen(false)} wish={wish as Wish} /> */}
         <WishCardCombined open={open} onClose={() => setOpen(false)} wish={wish as Wish} />
     </>
   )
