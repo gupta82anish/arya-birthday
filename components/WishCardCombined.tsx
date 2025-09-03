@@ -89,7 +89,7 @@ function MobileCard({ open, wish, seed, onClose }: { open: boolean; wish: Wish; 
     
                     {wish.image_url && (
                       <div className="mt-4 rounded-2xl overflow-hidden flex-shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        { }
                         <Image src={wish.image_url} alt={wish.name} className="w-full max-h-[30vh] object-cover" />
                       </div>
                     )}
@@ -161,7 +161,7 @@ function DesktopBookCardClassic({
                 </div>
                 <div className="back">
                 {wish.image_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
+                     
                     <Image
                         src={wish.image_url}
                         alt={wish.name}

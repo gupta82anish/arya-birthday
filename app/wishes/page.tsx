@@ -22,13 +22,15 @@ async function fetchWishes() {
 export default async function WishesPage({
   searchParams,
 }: {
-  searchParams?: { [key: string]: string | string[] | undefined }
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
   const cookieStore = await cookies()
   const unlocked = cookieStore.get('wishes_unlocked')?.value === '1'
 
   if (!unlocked) {
-    const hasError = (searchParams?.error || '') === 'invalid'
+    const params = (await searchParams) || {}
+    const errorParam = Array.isArray(params.error) ? params.error[0] : params.error
+    const hasError = (errorParam || '') === 'invalid'
     return (
       <main className="max-w-md mx-auto pt-16">
         <header className="text-center pb-4">

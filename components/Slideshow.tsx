@@ -39,7 +39,7 @@ export default function Slideshow({ slides }: { slides: Slide[] | LocalSlide[] }
         >
           {items.map((s, i) => (
             <SwiperSlide key={`${s.src}-${i}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
+              { }
               <Image src={s.src} alt={s.caption ?? `Slide ${i + 1}`} className="w-full h-full object-cover" />
             </SwiperSlide>
           ))}
