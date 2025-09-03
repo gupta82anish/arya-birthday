@@ -2,9 +2,18 @@
 
 import { createAdminClient } from '@/lib/supabaseAdmin'
 import { randomUUID } from 'crypto'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 
 function checkPasscode(pass: string | null | undefined) {
   const expected = process.env.PASSCODE
+  if (!expected || pass !== expected) {
+    throw new Error('Invalid passcode')
+  }
+}
+
+function checkWishesPasscode(pass: string | null | undefined) {
+  const expected = process.env.WISHES_PASSCODE
   if (!expected || pass !== expected) {
     throw new Error('Invalid passcode')
   }
@@ -72,4 +81,23 @@ export async function submitSlide(formData: FormData) {
   if (insErr) throw insErr
 
   return { ok: true }
+}
+
+export async function unlockWishes(formData: FormData) {
+  const passcode = String(formData.get('passcode') || '')
+  try {
+    checkWishesPasscode(passcode)
+  } catch (e) {
+    redirect('/wishes?error=invalid')
+  }
+
+  const cookieStore = await cookies()
+  cookieStore.set('wishes_unlocked', '1', {
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 60 * 60 * 24, // 1 day
+  })
+
+  redirect('/wishes')
 }
